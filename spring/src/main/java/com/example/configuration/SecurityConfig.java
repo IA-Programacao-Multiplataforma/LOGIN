@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,32 +22,34 @@ import com.example.security.JwtSecurity;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // 1. O jeito CERTO de criar o AuthenticationManager no Spring Boot 3
     @Bean
-    public AuthenticationManager authenticationManager(
-            HttpSecurity httpSecurity,
-            PasswordEncoder passwordEncoder,
-            UserDetailsService userDetailsService) throws Exception {
-        AuthenticationManagerBuilder builder = httpSecurity
-                .getSharedObject(AuthenticationManagerBuilder.class);
-        builder.userDetailsService(userDetailsService).
-                passwordEncoder(passwordEncoder);
-        return builder.build();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(
+            HttpSecurity http,
+            JwtSecurity jwtSecurity,
+            UserDetailsService userDetails) throws Exception {
+
+        JwtAuthFilterSecurity jwtFilter = new JwtAuthFilterSecurity(jwtSecurity, userDetails);
+
         return http
-                .csrf(csrf -> csrf.disable()) // ESSENCIAL: Sem isso, o POST dá erro sempre
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Libera as rotas de registro e login
-                        .requestMatchers("/login/**").permitAll()
                         .requestMatchers("/usuarios/**").permitAll()
+                        .requestMatchers("/autenticacao/**").permitAll()
+                        .requestMatchers("/error").permitAll() // <-- O DETECTOR DE MENTIRAS AQUI
                         .anyRequest().authenticated()
                 )
+                // DESLIGAMOS O FILTRO AQUI COLOCANDO AS DUAS BARRAS:
+                // .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance();

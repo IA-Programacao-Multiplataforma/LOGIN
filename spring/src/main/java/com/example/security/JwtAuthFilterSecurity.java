@@ -22,22 +22,17 @@ public class JwtAuthFilterSecurity extends OncePerRequestFilter {
         this.service = service;
     }
 
-    // --- ADICIONE ESTE MÉTODO AQUI ---
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
-        // Isso diz: "Se o caminho for /login/registro, nem ligue o filtro!"
-        return path.startsWith("/login/registro");
+        return path.startsWith("/autenticacao/") || path.startsWith("/usuarios/");
     }
-    // --------------------------------
-
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        // ... (o resto do seu código continua igual aqui embaixo)
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             // ... lógica do token

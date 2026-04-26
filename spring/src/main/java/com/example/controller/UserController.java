@@ -15,7 +15,7 @@ import com.example.entity.User;
 import com.example.repository.LoginRepository;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/usuarios")
 public class UserController {
 
     private final LoginRepository repository;
@@ -25,11 +25,14 @@ public class UserController {
     }
 
     // Rota para criar usuário (Registro)
+    // O endereço agora será: POST http://localhost:8081/usuarios/registro
     @PostMapping("/registro")
     public User criar(@RequestBody UserRequest request) {
         User novoLogin = UserControllerAdapter.cast(request);
         return repository.salvar(novoLogin);
     }
+
+    // O GET agora será: http://localhost:8081/usuarios
     @GetMapping
     public String getLogin() {
         return "Realizar Login";

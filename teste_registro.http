@@ -1,0 +1,78 @@
+### ===================================================
+### FASE 1: SEGURANÇA (Acesso Direto ao Login na 8081)
+### ===================================================
+
+### 1. Registrar Usuário (Se a Ana já existe, pule este)
+POST http://localhost:8081/usuarios/registro
+Content-Type: application/json
+
+{
+  "username": "Isa",
+  "password": "123",
+  "email": "isa@teste.com",
+  "cep": "08031020",
+  "roles": ["USER"]
+}
+
+### 2. Fazer Login (GERAR NOVO TOKEN)
+# -> Copie o Token gigante gerado na resposta deste POST
+POST http://localhost:8081/autenticacao/login
+Content-Type: application/json
+
+{
+  "username": "Ana Pereira",
+  "password": "123"
+}
+
+
+### ===================================================
+### FASE 2: CLIENTES (Passando pelo Gateway na 8080)
+### ===================================================
+
+### 3. Cadastrar o Perfil de Cliente
+# -> Cole o Token no Authorization
+# -> Na resposta, copie o "id" que o MongoDB vai gerar para a Ana!
+POST http://localhost:8080/clientes
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBbmEgUGVyZWlyYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NzcxNzg3NDcsImV4cCI6MTc3NzE3OTk0N30.V3cXoayJBLIN28e2IavXRfM57aLmQr3JtPdanJlS6Qs
+Content-Type: application/json
+
+{
+  "nome": "Ana Pereira",
+  "data_nascimento": "1995-08-20",
+  "endereco": {
+    "logradouro": "Rua das Flores",
+    "numero": "123",
+    "cidade": "São Paulo",
+    "estado": "SP"
+  }
+}
+
+### 4. Listar Clientes
+GET http://localhost:8080/clientes
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBbmEgUGVyZWlyYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NzcxNzg3NDcsImV4cCI6MTc3NzE3OTk0N30.V3cXoayJBLIN28e2IavXRfM57aLmQr3JtPdanJlS6Qs
+
+
+### ===================================================
+### FASE 3: PRODUTOS & VENDAS (Passando pelo Gateway na 8080)
+### ===================================================
+
+### 5. Listar Produtos (Para ver se a rota está ok)
+GET http://localhost:8080/produtos
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBbmEgUGVyZWlyYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NzcxNzg3NDcsImV4cCI6MTc3NzE3OTk0N30.V3cXoayJBLIN28e2IavXRfM57aLmQr3JtPdanJlS6Qs
+
+### 6. Realizar a Venda
+POST http://localhost:8080/produtos/vendas
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBbmEgUGVyZWlyYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NzcxNzg3NDcsImV4cCI6MTc3NzE3OTk0N30.V3cXoayJBLIN28e2IavXRfM57aLmQr3JtPdanJlS6Qs
+Content-Type: application/json
+
+{
+  "clienteId": "3a8bded7-3555-4c45-8536-f30c0cee4b87",
+  "itens": [
+    { "produtoNome": "Lapis", "quantidade": 10 },
+    { "produtoNome": "DETERGENTE", "quantidade": 2 }
+  ]
+}
+
+### 7. Listar Vendas do Cliente
+GET http://localhost:8080/produtos/vendas/cliente/3a8bded7-3555-4c45-8536-f30c0cee4b87
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBbmEgUGVyZWlyYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NzcxNzg3NDcsImV4cCI6MTc3NzE3OTk0N30.V3cXoayJBLIN28e2IavXRfM57aLmQr3JtPdanJlS6Qs

@@ -20,6 +20,13 @@ public class UserDetailsSecurity implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User login = repository.findByUsername(username);
+
+        // Se o banco não achar o usuário, temos que avisar o Spring aqui!
+        if (login == null) {
+            System.out.println(">>> ERRO: USUÁRIO " + username + " NÃO EXISTE NO BANCO! <<<");
+            throw new UsernameNotFoundException("Usuário não encontrado");
+        }
+
         return new AuthUserDetails(login);
     }
 }

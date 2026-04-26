@@ -7,11 +7,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public record AuthUserDetails(
-        User login
-) implements UserDetails {
+public record AuthUserDetails(User login) implements UserDetails {
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Transformamos as suas Roles (USER, ADMIN) em autoridades do Spring
+        // O "ROLE_" é um padrão que o Spring Security adora
         return login.roles().stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
                 .toList();
@@ -19,12 +20,12 @@ public record AuthUserDetails(
 
     @Override
     public String getPassword() {
-        return login.password();
+        return login != null ? login.password() : null;
     }
 
     @Override
     public String getUsername() {
-        return login.username();
+        return login != null ? login.username() : null;
     }
 
     @Override

@@ -15,19 +15,28 @@ public class LoginRepositoryImpl implements LoginRepository {
         this.repository = repository;
     }
 
+    // O método de salvar que você já tinha feito!
     @Override
     public User salvar(User login) {
         LoginOrmMongo orm = LoginRepositoryAdapter.castEntity(login);
         return LoginRepositoryAdapter.castOrm(repository.save(orm));
     }
 
+    // O método de deletar que o Java estava sentindo falta!
     @Override
     public void deletar(String id) {
         repository.deleteById(id);
     }
 
+    // O método de busca que vai gerar o nosso Token!
     @Override
     public User findByUsername(String username) {
-        return null;
+        LoginOrmMongo orm = repository.findByUsername(username);
+
+        if (orm == null) {
+            return null;
+        }
+
+        return LoginRepositoryAdapter.castOrm(orm);
     }
 }

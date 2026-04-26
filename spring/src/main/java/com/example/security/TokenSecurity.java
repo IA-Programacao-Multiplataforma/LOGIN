@@ -1,6 +1,6 @@
 package com.example.security;
 
-import com.example.entity.Login;
+import com.example.entity.Login; // Importamos a Entidade
 import com.example.entity.Token;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,10 +23,15 @@ public class TokenSecurity {
         this.authenticationManager = authenticationManager;
     }
 
+    // Agora o método aceita 'Login' (a entidade), resolvendo o erro de tipos!
     public Token gerarToken(Login login) {
+        // 1. Autentica no Spring
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 login.username(), login.password());
+
         authenticationManager.authenticate(authToken);
+
+        // 2. Busca detalhes e gera a string do Token
         UserDetails userDetails = userDetailsService.loadUserByUsername(login.username());
         return new Token(jwtSecurity.generateToken(userDetails));
     }

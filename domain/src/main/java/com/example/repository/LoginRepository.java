@@ -6,6 +6,7 @@ public interface LoginRepository {
     User salvar(User user);
     void deletar(String id);
 
-
     User findByUsername(String username);
+    User findByEmail(String email);
+
 }

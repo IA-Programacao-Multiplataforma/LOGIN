@@ -24,15 +24,15 @@ public class UserController {
         this.repository = repository;
     }
 
-    @GetMapping
-    public String getLogin() {
-        return "Realizar Login";
-    }
-
-    @PostMapping
+    // Rota para criar usuário (Registro)
+    @PostMapping("/registro")
     public User criar(@RequestBody UserRequest request) {
         User novoLogin = UserControllerAdapter.cast(request);
         return repository.salvar(novoLogin);
+    }
+    @GetMapping
+    public String getLogin() {
+        return "Realizar Login";
     }
 
     @PutMapping

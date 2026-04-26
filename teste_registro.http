@@ -7,9 +7,9 @@ POST http://localhost:8081/usuarios/registro
 Content-Type: application/json
 
 {
-  "username": "Isa",
+  "username": "Ana Pereira",
   "password": "123",
-  "email": "isa@teste.com",
+  "email": "ana@teste.com",
   "cep": "08031020",
   "roles": ["USER"]
 }

@@ -6,16 +6,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.example.security.JwtAuthFilterSecurity;
-import com.example.security.JwtSecurity;
 
 @Configuration
 @EnableWebSecurity
@@ -36,12 +30,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable()) // ESSENCIAL: Sem isso, o POST dá erro sempre
+                .csrf(csrf -> csrf.disable()) 
+                .cors(cors -> cors.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Libera as rotas de registro e login
+                        .requestMatchers("/login/registro").permitAll()
+                        .requestMatchers("/login/auth").permitAll() 
                         .requestMatchers("/login/**").permitAll()
-                        .requestMatchers("/usuarios/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();

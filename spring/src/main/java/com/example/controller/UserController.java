@@ -1,7 +1,6 @@
 package com.example.controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,10 +29,18 @@ public class UserController {
         User novoLogin = UserControllerAdapter.cast(request);
         return repository.salvar(novoLogin);
     }
-    @GetMapping
-    public String getLogin() {
-        return "Realizar Login";
+
+    @PostMapping("/auth")
+    public String autenticar(@RequestBody UserRequest request) {
+        User usuarioBanco = repository.findByUsername(request.username());
+
+        if (usuarioBanco != null && usuarioBanco.password().equals(request.password())) {
+            return "Login realizado com sucesso! Bem-vindo " + usuarioBanco.username();
+        } else {
+            return "Usuário ou senha inválidos!";
+        }
     }
+    
 
     @PutMapping
     public User atualizar(@RequestBody UserRequest request) {

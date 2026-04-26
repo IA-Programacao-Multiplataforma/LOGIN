@@ -1,12 +1,13 @@
 package com.example.security;
 
-import com.example.entity.User;
-import com.example.repository.LoginRepository;
-import com.example.security.dto.AuthUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+
+import com.example.entity.User;
+import com.example.repository.LoginRepository;
+import com.example.security.dto.AuthUserDetails;
 
 @Component
 public class UserDetailsSecurity implements UserDetailsService {
@@ -20,6 +21,10 @@ public class UserDetailsSecurity implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User login = repository.findByUsername(username);
+        if (login == null) {
+            throw new UsernameNotFoundException("Usuário não encontrado: " + username);
+        }
         return new AuthUserDetails(login);
     }
 }
+

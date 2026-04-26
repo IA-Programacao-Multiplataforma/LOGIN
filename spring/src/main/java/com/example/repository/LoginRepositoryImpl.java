@@ -1,10 +1,11 @@
 package com.example.repository;
 
+import org.springframework.stereotype.Repository;
+
 import com.example.entity.User;
 import com.example.repository.adapter.LoginRepositoryAdapter;
 import com.example.repository.mongo.LoginRepositoryWithMongoDB;
 import com.example.repository.orm.LoginOrmMongo;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class LoginRepositoryImpl implements LoginRepository {
@@ -28,6 +29,15 @@ public class LoginRepositoryImpl implements LoginRepository {
 
     @Override
     public User findByUsername(String username) {
-        return null;
+        return repository.findByUsername(username)
+                .map(LoginRepositoryAdapter::castOrm) // Converte ORM -> Entity
+                .orElse(null); // Retorna null se não achar
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return repository.findByEmail(email)
+                .map(LoginRepositoryAdapter::castOrm)
+                .orElse(null);
     }
 }

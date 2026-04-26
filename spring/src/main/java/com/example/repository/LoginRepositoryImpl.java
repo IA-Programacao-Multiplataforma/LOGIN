@@ -1,10 +1,11 @@
 package com.example.repository;
 
+import org.springframework.stereotype.Repository;
+
 import com.example.entity.User;
 import com.example.repository.adapter.LoginRepositoryAdapter;
 import com.example.repository.mongo.LoginRepositoryWithMongoDB;
 import com.example.repository.orm.LoginOrmMongo;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class LoginRepositoryImpl implements LoginRepository {
@@ -38,5 +39,10 @@ public class LoginRepositoryImpl implements LoginRepository {
         }
 
         return LoginRepositoryAdapter.castOrm(orm);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
